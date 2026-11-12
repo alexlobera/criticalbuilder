@@ -1,99 +1,42 @@
 ---
-import { isoDate, postNumber, postUrl, type BlogPost } from '../lib/posts';
+import { postUrl, type BlogPost } from '../lib/posts';
+import Cover from './Cover.astro';
+import PostMeta from './PostMeta.astro';
 
 interface Props {
   posts: BlogPost[];
-  /** Offset for the staggered reveal animation. */
-  delay?: number;
+  /** Load the first thumbnails eagerly when the list is the first thing on the page. */
+  eager?: boolean;
 }
 
-const { posts, delay = 0 } = Astro.props;
+const { posts, eager = false } = Astro.props;
 ---
 
-<ol class="ledger" role="list">
+{/* One post per row: thumbnail on the left, details on the right. */}
+<ul class="space-y-8" role="list">
   {
     posts.map((post, i) => (
-      <li class="reveal" style={`--i: ${i + delay}`}>
-        <a href={postUrl(post)}>
-          <span class="meta">
-            <span>{postNumber(post)}</span>
-            <time datetime={post.data.pubDate.toISOString()}>{isoDate(post.data.pubDate)}</time>
-            <span>{post.minutes} min</span>
-          </span>
-          <span class="title">
-            {post.data.title}
-            <span class="arrow" aria-hidden="true">
-              →
-            </span>
-          </span>
-          <span class="desc">{post.data.description}</span>
-        </a>
+      <li>
+        <article class="post-item group grid grid-cols-[7rem_minmax(0,1fr)] items-start gap-x-4 sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-x-5">
+          <a href={postUrl(post)} tabindex="-1" aria-hidden="true" class="block">
+            <Cover post={post} size="thumb" eager={eager && i < 3} />
+          </a>
+          <div>
+            <PostMeta post={post} class="mb-1.5" />
+            <h3 class="mb-1 leading-snug font-bold text-balance text-strong sm:text-[0.9375rem]">
+              <a
+                href={postUrl(post)}
+                class="decoration-accent underline-offset-4 group-hover:underline"
+              >
+                {post.data.title}
+              </a>
+            </h3>
+            <p class="line-clamp-3 leading-relaxed text-pretty sm:line-clamp-none">
+              {post.data.description}
+            </p>
+          </div>
+        </article>
       </li>
     ))
   }
-</ol>
-
-<style>
-  .ledger {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  li + li {
-    border-top: 1px solid var(--rule);
-  }
-  a {
-    display: grid;
-    gap: 0.45rem;
-    padding-block: 1.6rem;
-    text-decoration: none;
-    color: var(--ink);
-  }
-  li:first-child a {
-    padding-top: 0;
-  }
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 1.25rem;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .meta span:first-child {
-    color: var(--accent-text);
-  }
-  .title {
-    font-size: 1.65rem;
-    font-weight: 450;
-    line-height: 1.2;
-    letter-spacing: -0.012em;
-    text-wrap: balance;
-    transition: color 150ms ease;
-  }
-  .arrow {
-    display: inline-block;
-    margin-left: 0.15em;
-    color: var(--accent);
-    opacity: 0;
-    transform: translateX(-0.4em);
-    transition:
-      opacity 200ms ease,
-      transform 200ms ease;
-  }
-  a:hover .title {
-    color: var(--accent-text);
-  }
-  a:hover .arrow,
-  a:focus-visible .arrow {
-    opacity: 1;
-    transform: none;
-  }
-  .desc {
-    color: var(--ink-2);
-    font-size: 1.0625rem;
-    line-height: 1.5;
-  }
-</style>
+</ul>

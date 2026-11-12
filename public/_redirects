@@ -1,0 +1,4 @@
+# /blog is not a page yet: posts are listed on the home page.
+# Temporary (302) so browsers do not cache it once /blog becomes a real page.
+/blog   /  302
+/blog/  /  302

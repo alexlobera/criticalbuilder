@@ -13,57 +13,15 @@ interface Props {
 }
 
 const { tag } = Astro.props;
+const count = `${tag.posts.length} ${tag.posts.length === 1 ? 'post' : 'posts'}`;
 ---
 
 <BaseLayout title={`Posts tagged “${tag.name}”`} description={`Posts about ${tag.name} on Critical Builder.`}>
-  <header class="page-head wrap row">
-    <p class="margin label reveal"><a href="/blog/tags">Tag</a></p>
-    <div class="main">
-      <h1 class="reveal" style="--i: 1">{tag.name}</h1>
-      <p class="label reveal" style="--i: 2">
-        {tag.posts.length} {tag.posts.length === 1 ? 'post' : 'posts'}
-      </p>
-    </div>
-  </header>
-
-  <section class="section wrap row" aria-label="Posts">
-    <div class="main">
-      <PostList posts={tag.posts} delay={3} />
-      <p class="back">
-        <a class="arrow-link back" href="/blog"><span aria-hidden="true">←</span> All posts</a>
-      </p>
-    </div>
-  </section>
+  <p class="mb-2 text-xs">
+    <a href="/" class="text-accent underline-offset-[3px] hover:underline">← All posts</a>
+  </p>
+  <h1 class="mb-1 text-2xl font-bold text-strong"><span class="text-accent">#</span>{tag.name}</h1>
+  <p class="mb-10 text-xs text-muted">{count}</p>
+  <h2 class="sr-only">Posts</h2>
+  <PostList posts={tag.posts} eager />
 </BaseLayout>
-
-<style>
-  .page-head {
-    padding-block: clamp(3rem, 8vw, 5.5rem) 2.75rem;
-  }
-  .page-head .margin {
-    padding-top: 0.9rem;
-  }
-  .page-head .margin a {
-    text-decoration: none;
-  }
-  .page-head .margin a:hover {
-    color: var(--ink);
-  }
-  h1 {
-    margin: 0 0 0.75rem;
-    font-size: clamp(2.75rem, 7vw, 4.25rem);
-    font-weight: 400;
-    font-style: italic;
-    line-height: 1;
-    letter-spacing: -0.03em;
-  }
-  .back {
-    margin: 2.5rem 0 0;
-  }
-  @media (max-width: 56rem) {
-    .page-head .margin {
-      padding-top: 0;
-      margin-bottom: 1rem;
-    }
-  }
-</style>

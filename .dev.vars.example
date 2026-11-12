@@ -1,0 +1,7 @@
+# Secrets for the newsletter Worker when running `npm run preview` (wrangler dev).
+# Copy to .dev.vars. In production, set each with `npx wrangler secret put <NAME>`.
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxx
+# Any long random string, e.g. the output of `openssl rand -base64 32`
+NEWSLETTER_SECRET=change-me
+# Optional: Cloudflare Turnstile secret key (pair with PUBLIC_TURNSTILE_SITE_KEY at build time)
+# TURNSTILE_SECRET_KEY=

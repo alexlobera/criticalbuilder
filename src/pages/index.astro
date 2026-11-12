@@ -1,89 +1,46 @@
 ---
+import NewsletterSection from '../components/NewsletterSection.astro';
+import FeaturedPost from '../components/FeaturedPost.astro';
 import PostList from '../components/PostList.astro';
-import { AUTHOR, ESTABLISHED, HOME_POST_COUNT, SITE_DESCRIPTION } from '../consts';
+import { AUTHOR, HOME_HEADING, SITE_DESCRIPTION } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPosts } from '../lib/posts';
 
-const posts = await getPosts();
-const latest = posts.slice(0, HOME_POST_COUNT);
+const [latest, ...older] = await getPosts();
 ---
 
 <BaseLayout>
-  <section class="hero wrap row">
-    <p class="margin label reveal">Est. {ESTABLISHED}</p>
-    <div class="main">
-      <h1 class="display reveal" style="--i: 1">
-        Critical <em>Builder</em><span class="dot">.</span>
-      </h1>
-      <p class="intro reveal" style="--i: 2">{SITE_DESCRIPTION}</p>
-      <p class="label byline reveal" style="--i: 3">Written by {AUTHOR}</p>
-    </div>
+  <section class="mb-12">
+    <h1 class="mb-4 text-2xl font-bold text-strong">{HOME_HEADING}</h1>
+    <p class="max-w-[62ch] leading-7">
+      {SITE_DESCRIPTION} Written by {AUTHOR}. New posts by <a href="/rss.xml" class="link text-link"
+        >RSS</a
+      > or <a href="/newsletter" class="link text-link">email</a>.
+    </p>
   </section>
 
-  <section class="section wrap row" aria-labelledby="latest">
-    <h2 id="latest" class="margin label">Latest</h2>
-    <div class="main">
-      {
-        latest.length > 0 ? (
-          <>
-            <PostList posts={latest} delay={4} />
-            {posts.length > latest.length && (
-              <p class="more">
-                <a class="arrow-link" href="/blog">
-                  All {posts.length} posts <span aria-hidden="true">→</span>
-                </a>
-              </p>
-            )}
-          </>
-        ) : (
-          <p class="empty">The first post is on its way.</p>
-        )
-      }
-    </div>
-  </section>
+  {
+    latest ? (
+      <>
+        <section class="mb-14" aria-labelledby="latest">
+          <h2 id="latest" class="section-title mb-4">
+            Latest
+          </h2>
+          <FeaturedPost post={latest} />
+        </section>
+        {older.length > 0 && (
+          <section aria-labelledby="posts">
+            <h2 id="posts" class="section-title mb-4">
+              Posts
+            </h2>
+            <PostList posts={older} />
+          </section>
+        )}
+      </>
+    ) : (
+      <p class="text-muted">The first post is on its way.</p>
+    )
+  }
+
+  <NewsletterSection id="home-newsletter" />
 </BaseLayout>
-
-<style>
-  .hero {
-    padding-block: clamp(3.5rem, 10vw, 7.5rem) clamp(3rem, 7vw, 5rem);
-  }
-  .hero .margin {
-    padding-top: 1.1rem;
-  }
-  .display {
-    margin: 0 0 1.75rem;
-    font-size: clamp(3.4rem, 10.5vw, 6.75rem);
-    font-weight: 380;
-    line-height: 0.92;
-    letter-spacing: -0.035em;
-    margin-left: -0.05em;
-  }
-  .display em {
-    font-weight: 330;
-  }
-  .dot {
-    color: var(--accent);
-  }
-  .intro {
-    margin: 0 0 1.75rem;
-    max-width: 30rem;
-    font-size: clamp(1.25rem, 2.4vw, 1.5rem);
-    line-height: 1.4;
-    color: var(--ink-2);
-    text-wrap: pretty;
-  }
-  .more {
-    margin: 2.25rem 0 0;
-  }
-  .empty {
-    margin: 0;
-    font-style: italic;
-    color: var(--muted);
-  }
-  @media (max-width: 56rem) {
-    .hero .margin {
-      padding-top: 0;
-      margin-bottom: 1.25rem;
-    }
-  }
-</style>

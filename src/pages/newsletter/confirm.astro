@@ -1,0 +1,22 @@
+---
+// The Worker injects the token from the email link into the hidden field (see worker/index.ts).
+// Confirming takes a button press, so email security scanners that open links can't subscribe anyone.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Confirm your subscription" noindex>
+  <p class="mb-3 text-xs text-muted"><span class="text-accent">$</span> subscribe --confirm</p>
+  <h1 class="mb-4 text-2xl font-bold text-strong">One last step</h1>
+  <p class="mb-8 max-w-[62ch] leading-relaxed">
+    Confirm that you want new Critical Builder posts sent to your inbox.
+  </p>
+  <form action="/api/confirm" method="post">
+    <input type="hidden" name="token" value="" />
+    <button
+      type="submit"
+      class="cursor-pointer bg-strong px-4 py-2 font-bold text-bg hover:bg-accent"
+    >
+      Confirm subscription →
+    </button>
+  </form>
+</BaseLayout>

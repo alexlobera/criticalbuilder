@@ -12,7 +12,7 @@ export const GET: APIRoute<{ post: BlogPost }> = async ({ props, site }) => {
   return pngResponse(
     await renderOgImage({
       title: post.data.title,
-      meta: `${postNumber(post)}  ·  ${longDate(post.data.pubDate)}`.toUpperCase(),
+      meta: `${postNumber(post)} · ${longDate(post.data.pubDate)}`,
       host: site!.host,
     }),
   );

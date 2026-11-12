@@ -1,166 +1,133 @@
-/* Long-form article typography. Applied to rendered Markdown/MDX. */
+/* Article typography for rendered Markdown/MDX. Monospace, Markdown-flavoured headings. */
 
 .prose {
-  color: var(--ink);
-  hyphens: auto;
-  hanging-punctuation: first;
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: var(--text);
+  overflow-wrap: break-word;
 }
 
 .prose > :first-child {
   margin-top: 0;
 }
 
-.prose p,
-.prose ul,
-.prose ol,
-.prose blockquote,
-.prose pre,
-.prose table,
-.prose figure {
-  margin: 0 0 1.35em;
+.prose :where(p, ul, ol, blockquote, pre, table, figure, img, video) {
+  margin: 0 0 1.4em;
 }
 
-.prose h2,
-.prose h3,
-.prose h4 {
-  position: relative;
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  hyphens: manual;
+.prose :where(h2, h3, h4, h5, h6) {
+  color: var(--strong);
+  font-weight: 700;
+  line-height: 1.35;
   text-wrap: balance;
 }
 
-.prose h2 {
-  font-size: 1.75rem;
-  margin: 2.4em 0 0.7em;
-}
-
-/* Section mark hanging in the margin. */
-.prose h2::before {
-  content: '§';
-  position: absolute;
-  right: calc(100% + 0.6em);
-  top: 0.08em;
-  font-weight: 400;
+/* Markdown heading markers: ## Section, ### Sub-section. */
+.prose :where(h2, h3, h4)::before {
   color: var(--accent);
+  font-weight: 400;
 }
-
+.prose h2 {
+  font-size: 1.25rem;
+  margin: 2.2em 0 0.7em;
+}
+.prose h2::before {
+  content: '## ';
+}
 .prose h3 {
-  font-size: 1.35rem;
-  font-style: italic;
-  font-weight: 450;
-  margin: 2em 0 0.6em;
+  font-size: 1.0625rem;
+  margin: 1.9em 0 0.6em;
 }
-
+.prose h3::before {
+  content: '### ';
+}
 .prose h4 {
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin: 2em 0 0.75em;
+  font-size: 0.9375rem;
+  margin: 1.7em 0 0.5em;
+}
+.prose h4::before {
+  content: '#### ';
 }
 
 .prose a {
+  color: var(--strong);
   text-decoration-line: underline;
-  text-decoration-color: var(--accent);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-  transition:
-    text-decoration-thickness 150ms ease,
-    color 150ms ease;
+  text-underline-offset: 3px;
 }
 .prose a:hover {
-  color: var(--accent-text);
+  text-decoration-color: var(--link);
   text-decoration-thickness: 2px;
 }
 
 .prose strong {
-  font-weight: 650;
+  color: var(--strong);
+  font-weight: 700;
 }
 
-.prose ul,
+.prose :where(ul, ol) {
+  padding-left: 1.5em;
+}
+.prose ul {
+  list-style: square;
+}
 .prose ol {
-  padding-left: 1.3em;
+  list-style: decimal;
 }
 .prose li {
-  margin-bottom: 0.4em;
-  padding-left: 0.2em;
+  margin-bottom: 0.35em;
+  padding-left: 0.25em;
 }
-.prose li > ul,
-.prose li > ol {
-  margin: 0.4em 0 0;
+.prose li::marker {
+  color: var(--accent);
 }
-.prose ul > li::marker {
-  content: '–  ';
-  color: var(--muted);
-}
-.prose ol > li::marker {
-  font-family: var(--mono);
-  font-size: 0.8em;
-  color: var(--muted);
+.prose li > :where(ul, ol) {
+  margin: 0.35em 0 0;
 }
 
 .prose blockquote {
-  padding: 0.1em 0 0.1em 1.25em;
+  padding-left: 1.1em;
   border-left: 2px solid var(--accent);
+  color: var(--muted);
   font-style: italic;
-  color: var(--ink-2);
 }
 .prose blockquote > :last-child {
   margin-bottom: 0;
 }
 
 .prose :not(pre) > code {
-  font-family: var(--mono);
-  font-size: 0.82em;
-  padding: 0.12em 0.36em;
-  border-radius: 3px;
-  background: var(--code-bg);
-  color: var(--ink);
-  overflow-wrap: anywhere;
+  padding: 0.1em 0.35em;
+  border: 1px dotted var(--muted);
+  border-radius: 2px;
+  font-size: 0.9em;
+  color: var(--strong);
 }
 
 .prose pre {
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  line-height: 1.65;
-  padding: 1.2rem 1.4rem;
+  padding: 1rem 1.15rem;
   border: 1px solid var(--rule);
-  border-radius: 4px;
+  font-size: 0.8125rem;
+  line-height: 1.7;
   overflow-x: auto;
   tab-size: 2;
-  hyphens: none;
-}
-.prose pre code {
-  font-family: inherit;
 }
 
 .prose hr {
+  margin: 2.5em 0;
   border: 0;
-  margin: 3em 0;
-  text-align: center;
-  overflow: visible;
-}
-.prose hr::after {
-  content: '■ ■ ■';
-  font-size: 0.45rem;
-  letter-spacing: 1.6em;
-  color: var(--accent);
+  border-top: 1px dashed var(--muted);
 }
 
-.prose img,
-.prose video {
+.prose :where(img, video) {
   display: block;
-  border-radius: 3px;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
 }
-
 .prose figure img {
-  margin-bottom: 0.6em;
+  margin-bottom: 0.5em;
 }
 .prose figcaption {
-  font-family: var(--mono);
   font-size: 0.75rem;
   color: var(--muted);
 }
@@ -170,62 +137,46 @@
   width: 100%;
   overflow-x: auto;
   border-collapse: collapse;
-  font-size: 0.95rem;
-  hyphens: none;
+  font-size: 0.8125rem;
 }
-.prose th,
-.prose td {
-  padding: 0.55em 1em 0.55em 0;
-  border-bottom: 1px solid var(--rule);
+.prose :where(th, td) {
+  padding: 0.5em 1.25em 0.5em 0;
+  border-bottom: 1px dashed var(--rule);
   text-align: left;
   vertical-align: top;
 }
 .prose th {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  border-bottom-color: var(--rule-strong);
+  color: var(--strong);
+  border-bottom: 1px solid var(--muted);
 }
 
-/* GFM footnotes */
+.prose kbd {
+  padding: 0.05em 0.35em;
+  border: 1px solid var(--rule);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+/* GFM footnotes, with [1]-style references. */
+.prose sup a {
+  margin-left: 0.15em;
+  text-decoration: none;
+  color: var(--accent);
+}
+.prose sup a::before {
+  content: '[';
+}
+.prose sup a::after {
+  content: ']';
+}
 .prose .footnotes {
-  margin-top: 3.5em;
-  padding-top: 1.25em;
-  border-top: 1px solid var(--rule);
-  font-size: 0.9rem;
-  color: var(--ink-2);
+  margin-top: 3em;
+  padding-top: 1em;
+  border-top: 1px dashed var(--muted);
+  font-size: 0.8125rem;
 }
 .prose .footnotes h2 {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 0 0 1em;
-}
-.prose .footnotes h2::before {
-  content: none;
-}
-.prose sup a {
-  font-family: var(--mono);
-  font-size: 0.7em;
-  text-decoration: none;
-  color: var(--accent-text);
-}
-
-@media (max-width: 56rem) {
-  .prose h2::before {
-    position: static;
-    margin-right: 0.35em;
-  }
-  .prose pre {
-    margin-inline: calc(-1 * var(--edge));
-    border-inline: 0;
-    border-radius: 0;
-    padding-inline: var(--edge);
-  }
+  margin-top: 0;
+  font-size: 0.875rem;
 }

@@ -1,8 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -1 7 7" shape-rendering="crispEdges">
+  <!-- Short form of the wordmark: a pixel "CB". The full wordmark is src/lib/wordmark.ts. -->
   <style>
-    .bg { fill: #1b1915; }
-    @media (prefers-color-scheme: dark) { .bg { fill: #ece6d9; } }
+    .ink { fill: #121212; }
+    .accent { fill: #cb2a42; }
+    @media (prefers-color-scheme: dark) {
+      .ink { fill: #ededed; }
+      .accent { fill: #f75b68; }
+    }
   </style>
-  <rect class="bg" width="32" height="32" rx="4"/>
-  <rect x="9" y="9" width="14" height="14" fill="#d2401c"/>
+  <path class="ink" d="M0 0h3v1h-3zM0 1h1v1h-1zM0 2h1v1h-1zM0 3h1v1h-1zM0 4h3v1h-3z"/>
+  <path class="accent" d="M3 0h2v1h-2zM3 1h1v1h-1zM5 1h1v1h-1zM3 2h2v1h-2zM3 3h1v1h-1zM5 3h1v1h-1zM3 4h2v1h-2z"/>
 </svg>

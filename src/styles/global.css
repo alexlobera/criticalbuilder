@@ -1,303 +1,133 @@
 /* ─────────────────────────────────────────────────────────────
-   Critical Builder — warm paper, ink, one vermillion signal.
+   Critical Builder — monospace, two colour modes, one accent.
+   Colours and type follow Astro Cactus (MIT, Chris Williams), except
+   that the accent (red) and link (teal) keep their hue in dark mode;
+   they're only lightened there so they stay readable.
    ───────────────────────────────────────────────────────────── */
 
+@import 'tailwindcss';
+
+/* Tailwind colour utilities (bg-bg, text-muted, border-rule, …) read the tokens below,
+   so they switch with the theme. */
+@theme inline {
+  --font-mono: var(--font-jetbrains);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-strong: var(--strong);
+  --color-muted: var(--muted);
+  --color-link: var(--link);
+  --color-accent: var(--accent);
+  --color-rule: var(--rule);
+}
+
 :root {
-  --paper: #f5f1e8;
-  --paper-2: #eee8db;
-  --ink: #1b1915;
-  --ink-2: #47433b;
-  --muted: #6c665b;
-  --rule: #e2dbcd;
-  --rule-strong: #cbc2b0;
-  --accent: #d2401c;
-  --accent-text: #ad3410;
-  --on-accent: #fff8f0;
-  --code-bg: #eee8db;
-  --grain-opacity: 0.05;
-  --grain-filter: none;
-
-  --serif: var(--font-serif);
-  --mono: var(--font-mono);
-
-  --measure: 40rem;
-  --margin-col: 9.5rem;
-  --gutter: 3rem;
-  --edge: 1.25rem;
-
+  --bg: oklch(98.48% 0 0);
+  --surface: oklch(95.5% 0 0);
+  --text: oklch(26.99% 0.0096 235.05);
+  --strong: oklch(18.15% 0 0);
+  --muted: oklch(44.6% 0.03 256.802);
+  --link: oklch(53% 0.0431 185.69);
+  --accent: oklch(55.27% 0.195 19.06);
+  --rule: oklch(88% 0 0);
+  --cover-dim: brightness(1);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --paper: #12110f;
-    --paper-2: #1b1a17;
-    --ink: #ece6d9;
-    --ink-2: #c8c1b3;
-    --muted: #958e81;
-    --rule: #2a2824;
-    --rule-strong: #3d3a34;
-    --accent: #ff6b3d;
-    --accent-text: #ff8a63;
-    --on-accent: #12110f;
-    --code-bg: #1b1a17;
-    --grain-opacity: 0.06;
-    --grain-filter: invert(1);
+    --bg: oklch(23.64% 0.0045 248);
+    --surface: oklch(28% 0.005 248);
+    --text: oklch(83.54% 0 264);
+    --strong: oklch(94.66% 0 0);
+    --muted: oklch(70.7% 0.022 261.325);
+    --link: oklch(70% 0.06 185.69);
+    --accent: oklch(68% 0.19 19.06);
+    --rule: oklch(35% 0.005 248);
+    --cover-dim: brightness(0.82);
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
-  --paper: #12110f;
-  --paper-2: #1b1a17;
-  --ink: #ece6d9;
-  --ink-2: #c8c1b3;
-  --muted: #958e81;
-  --rule: #2a2824;
-  --rule-strong: #3d3a34;
-  --accent: #ff6b3d;
-  --accent-text: #ff8a63;
-  --on-accent: #12110f;
-  --code-bg: #1b1a17;
-  --grain-opacity: 0.06;
-  --grain-filter: invert(1);
+  --bg: oklch(23.64% 0.0045 248);
+  --surface: oklch(28% 0.005 248);
+  --text: oklch(83.54% 0 264);
+  --strong: oklch(94.66% 0 0);
+  --muted: oklch(70.7% 0.022 261.325);
+  --link: oklch(70% 0.06 185.69);
+  --accent: oklch(68% 0.19 19.06);
+  --rule: oklch(35% 0.005 248);
+  --cover-dim: brightness(0.82);
   color-scheme: dark;
 }
 
-/* ── Base ─────────────────────────────────────────────────── */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+@view-transition {
+  navigation: auto;
 }
 
-html {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--serif);
-  font-optical-sizing: auto;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-padding-top: 2rem;
-}
-
-body {
-  margin: 0;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: var(--paper);
-  font-size: 1.1875rem;
-  line-height: 1.6;
-  text-rendering: optimizeLegibility;
-}
-
-/* Paper grain. Purely decorative; sits above everything, ignores the pointer. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  pointer-events: none;
-  opacity: var(--grain-opacity);
-  filter: var(--grain-filter);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-main {
-  flex: 1;
-}
-
-::selection {
-  background: var(--accent);
-  color: var(--on-accent);
-}
-
-a {
-  color: inherit;
-}
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-
-img,
-svg,
-video {
-  max-width: 100%;
-  height: auto;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.skip-link {
-  position: absolute;
-  left: var(--edge);
-  top: -3rem;
-  z-index: 60;
-  padding: 0.5rem 0.75rem;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  text-decoration: none;
-}
-.skip-link:focus {
-  top: 1rem;
-}
-
-/* ── Layout: a margin column for metadata, a reading column for text ── */
-
-.wrap {
-  width: 100%;
-  max-width: calc(var(--margin-col) + var(--gutter) + var(--measure) + 2 * var(--edge));
-  margin-inline: auto;
-  padding-inline: var(--edge);
-}
-
-.row {
-  display: grid;
-  grid-template-columns: var(--margin-col) minmax(0, var(--measure));
-  column-gap: var(--gutter);
-}
-.row > .margin {
-  grid-column: 1;
-}
-.row > .main {
-  grid-column: 2;
-  min-width: 0;
-}
-
-@media (max-width: 56rem) {
-  .row {
-    grid-template-columns: minmax(0, 1fr);
+@layer base {
+  html {
+    background: var(--bg);
+    scroll-padding-top: 2rem;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
-  .row > .margin,
-  .row > .main {
-    grid-column: 1;
+
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  :target {
+    scroll-margin-block: 5ex;
   }
 }
 
-/* Small mono labels used throughout. */
-.label {
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.section {
-  padding-block: 3.5rem;
-  border-top: 1px solid var(--rule);
-}
-
-@media (max-width: 56rem) {
-  .section > .margin.label {
-    margin-bottom: 1.5rem;
+@layer components {
+  /* Underlined text link that thickens on hover. */
+  .link {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
   }
-}
-
-/* Link with an arrow, e.g. "All posts →" */
-.arrow-link {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.5em;
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--ink);
-  padding-block: 0.25rem;
-  border-bottom: 1px solid var(--accent);
-}
-.arrow-link span {
-  display: inline-block;
-  color: var(--accent-text);
-  transition: transform 200ms ease;
-}
-.arrow-link:hover span {
-  transform: translateX(4px);
-}
-.arrow-link.back:hover span {
-  transform: translateX(-4px);
-}
-
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.tag {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  line-height: 1.35;
-  padding: 0.3rem 0.55rem;
-  color: var(--ink-2);
-  text-decoration: none;
-  border: 1px solid var(--rule-strong);
-  border-radius: 2px;
-  transition:
-    border-color 150ms ease,
-    color 150ms ease;
-}
-.tag:hover {
-  border-color: var(--accent);
-  color: var(--accent-text);
-}
-.tag .count {
-  color: var(--muted);
-  margin-left: 0.35em;
-}
-
-/* ── Page-load reveal ─────────────────────────────────────── */
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(0.6rem);
+  .link:hover {
+    text-decoration-color: var(--link);
+    text-decoration-thickness: 2px;
   }
-  to {
-    opacity: 1;
-    transform: none;
+
+  /* Section headings in the accent colour, e.g. "Latest", "Posts". */
+  .section-title {
+    color: var(--accent);
+    font-size: 1.125rem;
+    font-weight: 700;
   }
-}
 
-.reveal {
-  animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: calc(var(--i, 0) * 70ms);
-}
+  /* Cover photos are dimmed a little in dark mode. */
+  .cover-img {
+    filter: grayscale(0) var(--cover-dim);
+    transition: filter 300ms ease;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
+  /* In post lists, covers are black and white until the post is hovered, tabbed to or tapped. */
+  .post-item .cover-img {
+    filter: grayscale(1) var(--cover-dim);
+  }
+  .post-item:is(:hover, :focus-within, :active) .cover-img {
+    filter: grayscale(0) var(--cover-dim);
+  }
+
+  /* Generated cover for posts without an image: dot grid, number and title. */
+  .cover-dots {
+    background:
+      radial-gradient(circle at 1px 1px, color-mix(in oklch, var(--strong) 22%, transparent) 1px, transparent 0) 0 0 /
+        8px 8px,
+      var(--bg);
   }
 }
 
@@ -306,9 +136,6 @@ video {
 .astro-code,
 .astro-code span {
   color: var(--shiki-light);
-}
-.astro-code {
-  background-color: var(--code-bg) !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -320,4 +147,16 @@ video {
 :root[data-theme='dark'] .astro-code,
 :root[data-theme='dark'] .astro-code span {
   color: var(--shiki-dark);
+}
+.astro-code {
+  background-color: var(--surface) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  .cover-img {
+    transition: none;
+  }
 }

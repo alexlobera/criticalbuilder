@@ -1,0 +1,50 @@
+---
+// Status pages the newsletter Worker redirects to when JavaScript is off
+// (with JavaScript, the form shows these messages inline instead).
+import NewsletterForm from '../../components/NewsletterForm.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export function getStaticPaths() {
+  const STATUSES = {
+    'check-email': {
+      title: 'Check your inbox',
+      body: "We've sent you a confirmation link. Click it to finish subscribing. If it hasn't arrived in a few minutes, check your spam folder.",
+      retry: false,
+    },
+    confirmed: {
+      title: "You're subscribed",
+      body: 'New posts will arrive in your inbox. Every email has a one-click unsubscribe link.',
+      retry: false,
+    },
+    expired: {
+      title: 'That link has expired',
+      body: 'Confirmation links work for 7 days. Enter your email again to get a new one.',
+      retry: true,
+    },
+    error: {
+      title: 'Something went wrong',
+      body: "Your subscription didn't go through. Please try again in a minute.",
+      retry: true,
+    },
+  } as const;
+  return Object.entries(STATUSES).map(([status, props]) => ({ params: { status }, props }));
+}
+
+interface Props {
+  title: string;
+  body: string;
+  retry: boolean;
+}
+
+const { title, body, retry } = Astro.props;
+---
+
+<BaseLayout title={title} noindex>
+  <p class="mb-3 text-xs text-muted"><span class="text-accent">$</span> subscribe --status</p>
+  <h1 class="mb-4 text-2xl font-bold text-strong">{title}</h1>
+  <p class="mb-8 max-w-[62ch] leading-relaxed">{body}</p>
+  {retry && <NewsletterForm id="newsletter-retry-email" />}
+  <p class="mt-10 text-xs">
+    <a href="/" class="text-accent underline-offset-[3px] hover:underline">← Back to the blog</a>
+  </p>
+</BaseLayout>

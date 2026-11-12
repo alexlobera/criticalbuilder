@@ -6,11 +6,13 @@ tags: [meta]
 draft: true
 ---
 
-This post is a **draft**, so it only appears when you run `npm run dev`. Keep it as a reference or delete it. Body text is set in Newsreader with metadata in JetBrains Mono, and [links look like this](https://astro.build).
+This post is a **draft**, so it only appears when you run `npm run dev`. Keep it as a reference or delete it. Everything is set in JetBrains Mono, and [links look like this](https://astro.build).
+
+It has no `cover`, so the home page shows a generated cover with its number and title. To use an image instead, put it next to the post and add `cover: ./style-guide/cover.jpg` and `coverAlt: A short description` to the frontmatter.
 
 ## Section heading
 
-Second-level headings get a section mark that hangs in the left margin on wide screens. Paragraphs are kept to a comfortable measure of roughly sixty-five characters per line.
+Headings are prefixed with Markdown-style `##` markers in the accent colour.
 
 ### A smaller heading
 

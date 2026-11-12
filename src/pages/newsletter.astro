@@ -1,0 +1,22 @@
+---
+import NewsletterForm from '../components/NewsletterForm.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Newsletter"
+  description="Get new Critical Builder posts by email. One email per post, unsubscribe anytime."
+>
+  <p class="mb-3 text-xs text-muted">
+    <span class="text-accent">$</span> subscribe --to critical-builder
+  </p>
+  <h1 class="mb-4 text-2xl font-bold text-strong">Get new posts by email</h1>
+  <p class="mb-8 max-w-[62ch] leading-relaxed">
+    One email when something new is published, with the full post inside. No spam, and every email
+    has a one-click unsubscribe link.
+  </p>
+  <NewsletterForm id="newsletter-page-email" />
+  <p class="mt-10 text-xs text-muted">
+    Prefer a feed reader? <a href="/rss.xml" class="link text-link">Subscribe via RSS</a>.
+  </p>
+</BaseLayout>

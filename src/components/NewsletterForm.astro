@@ -1,0 +1,187 @@
+---
+import { PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
+
+interface Props {
+  /** Unique per page so the label points at the right input. */
+  id?: string;
+}
+
+const { id = 'newsletter-email' } = Astro.props;
+---
+
+<form class="newsletter-form" action="/api/subscribe" method="post" data-newsletter-form>
+  <div class="field">
+    <label class="sr-only" for={id}>Email address</label>
+    <input
+      id={id}
+      type="email"
+      name="email"
+      required
+      autocomplete="email"
+      inputmode="email"
+      placeholder="you@example.com"
+      maxlength="254"
+    />
+    <button type="submit">Subscribe <span aria-hidden="true">→</span></button>
+  </div>
+
+  <!-- Honeypot: hidden from people, filled in by naive bots. -->
+  <div class="honeypot" aria-hidden="true">
+    <label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  {
+    PUBLIC_TURNSTILE_SITE_KEY && (
+      <div
+        class="cf-turnstile"
+        data-sitekey={PUBLIC_TURNSTILE_SITE_KEY}
+        data-appearance="interaction-only"
+        data-theme="auto"
+        data-size="flexible"
+      />
+    )
+  }
+
+  <p class="status" role="status" aria-live="polite"></p>
+</form>
+
+{
+  PUBLIC_TURNSTILE_SITE_KEY && (
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+  )
+}
+
+<script>
+  type Result = { ok: boolean; error?: string };
+
+  const MESSAGES: Record<string, string> = {
+    sent: 'Almost done. Check your inbox and click the link to confirm.',
+    invalid_email: "That doesn't look like an email address.",
+    captcha: "We couldn't verify you're human. Please try again.",
+    rate_limited: 'Too many attempts. Please wait a minute and try again.',
+    server: 'Something went wrong on our side. Please try again later.',
+  };
+
+  declare global {
+    interface Window {
+      turnstile?: { reset: (el?: Element) => void };
+    }
+  }
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-newsletter-form]')) {
+    const status = form.querySelector<HTMLElement>('.status')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      form.dataset.state = 'sending';
+      status.textContent = 'Sending…';
+
+      let result: Result;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        result = (await res.json()) as Result;
+      } catch {
+        result = { ok: false, error: 'server' };
+      }
+
+      if (result.ok) {
+        form.dataset.state = 'sent';
+        status.textContent = MESSAGES.sent;
+        form.reset();
+      } else {
+        form.dataset.state = 'error';
+        status.textContent = MESSAGES[result.error ?? 'server'] ?? MESSAGES.server;
+        button.disabled = false;
+        // Turnstile tokens are single-use.
+        const widget = form.querySelector('.cf-turnstile');
+        if (widget) window.turnstile?.reset(widget);
+      }
+    });
+  }
+</script>
+
+<style>
+  .newsletter-form {
+    max-width: 34rem;
+  }
+  .field {
+    display: flex;
+    gap: 0.5rem;
+  }
+  input[type='email'] {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--rule);
+    border-radius: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+  }
+  input[type='email']::placeholder {
+    color: var(--muted);
+  }
+  input[type='email']:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  button {
+    flex: none;
+    padding: 0.5rem 0.9rem;
+    border: 0;
+    border-radius: 0;
+    background: var(--strong);
+    color: var(--bg);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button:hover {
+    background: var(--accent);
+  }
+  button:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .cf-turnstile {
+    margin-top: 0.75rem;
+  }
+  .status {
+    margin: 0.75rem 0 0;
+    min-height: 1.5em;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .status:empty {
+    min-height: 0;
+    margin: 0;
+  }
+  [data-state='sent'] .status {
+    color: var(--text);
+  }
+  [data-state='sent'] .status::before {
+    content: '✓ ';
+    color: var(--accent);
+  }
+  [data-state='error'] .status {
+    color: var(--accent);
+  }
+  @media (max-width: 30rem) {
+    .field {
+      flex-direction: column;
+    }
+  }
+</style>

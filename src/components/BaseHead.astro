@@ -1,6 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import { AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { cleanPath } from '../lib/url';
 import '../styles/global.css';
 
 export interface Props {
@@ -25,7 +26,7 @@ const {
 } = Astro.props;
 
 const pageTitle = title ? `${title} — ${SITE_TITLE}` : SITE_TITLE;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const canonical = new URL(cleanPath(Astro.url.pathname), Astro.site);
 const imageUrl = new URL(image, Astro.site);
 ---
 
@@ -41,8 +42,8 @@ const imageUrl = new URL(image, Astro.site);
 <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={new URL('/rss.xml', Astro.site)} />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <meta name="generator" content={Astro.generator} />
-<meta name="theme-color" content="#f5f1e8" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#12110f" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1d1f20" media="(prefers-color-scheme: dark)" />
 
 <!-- Apply a saved theme before first paint to avoid a flash. -->
 <script is:inline>
@@ -52,8 +53,7 @@ const imageUrl = new URL(image, Astro.site);
   } catch {}
 </script>
 
-<Font cssVariable="--font-serif" preload={[{ style: 'normal' }]} />
-<Font cssVariable="--font-mono" />
+<Font cssVariable="--font-jetbrains" preload={[{ weight: '400', style: 'normal' }]} />
 
 <meta property="og:site_name" content={SITE_TITLE} />
 <meta property="og:title" content={title ?? SITE_TITLE} />

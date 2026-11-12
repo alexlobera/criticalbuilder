@@ -1,0 +1,28 @@
+---
+// The pixel wordmark (CRITICAL / BUILDER). One unit in the viewBox is one pixel of the design,
+// so a height that's a multiple of 16px keeps every pixel crisp.
+import { WORDMARK_HEIGHT, WORDMARK_WIDTH, wordmarkRuns } from '../lib/wordmark';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const runs = wordmarkRuns();
+const path = (mark: 'i' | 'a') =>
+  runs
+    .filter((run) => run.mark === mark)
+    .map(({ x, y, length }) => `M${x} ${y}h${length}v1h-${length}z`)
+    .join('');
+---
+
+<svg
+  class={className}
+  viewBox={`0 0 ${WORDMARK_WIDTH} ${WORDMARK_HEIGHT}`}
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={path('i')} fill="currentColor"></path>
+  <path d={path('a')} fill="var(--accent)"></path>
+</svg>

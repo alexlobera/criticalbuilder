@@ -1,0 +1,25 @@
+---
+import { postUrl, type BlogPost } from '../lib/posts';
+import Cover from './Cover.astro';
+import PostMeta from './PostMeta.astro';
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+const url = postUrl(post);
+---
+
+<article class="post-item group">
+  <a href={url} tabindex="-1" aria-hidden="true" class="block">
+    <Cover post={post} size="wide" eager />
+  </a>
+  <PostMeta post={post} class="mt-3 mb-1.5" />
+  <h3 class="mb-1.5 text-lg leading-snug font-bold text-balance text-strong sm:text-xl">
+    <a href={url} class="underline decoration-accent decoration-1 underline-offset-4">
+      {post.data.title}
+    </a>
+  </h3>
+  <p class="leading-relaxed text-pretty">{post.data.description}</p>
+</article>

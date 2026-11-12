@@ -12,10 +12,15 @@ type Props = HeadProps;
   <head>
     <BaseHead {...Astro.props} />
   </head>
-  <body>
-    <a class="skip-link" href="#content">Skip to content</a>
+  <body
+    class="mx-auto flex min-h-dvh max-w-3xl flex-col bg-bg px-4 font-mono text-sm text-text antialiased sm:px-8"
+  >
+    <a
+      class="absolute -top-12 left-4 z-50 bg-strong px-3 py-2 text-bg no-underline focus:top-4"
+      href="#content">Skip to content</a
+    >
     <Header />
-    <main id="content">
+    <main id="content" class="flex-1">
       <slot />
     </main>
     <Footer />

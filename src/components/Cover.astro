@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets';
+import { postNumber, type BlogPost } from '../lib/posts';
+
+interface Props {
+  post: BlogPost;
+  /** `wide`: the featured post (16:7). `thumb`: a list thumbnail (16:9). */
+  size: 'wide' | 'thumb';
+  /** Load the image eagerly (for covers above the fold). */
+  eager?: boolean;
+}
+
+const { post, size, eager = false } = Astro.props;
+const { cover, coverAlt, title } = post.data;
+const number = postNumber(post);
+const host = Astro.site?.host ?? '';
+const wide = size === 'wide';
+---
+
+<div
+  class:list={[
+    'overflow-hidden border border-rule bg-surface',
+    wide ? 'aspect-[16/7]' : 'aspect-video',
+  ]}
+>
+  {
+    cover ? (
+      <Image
+        src={cover}
+        alt={coverAlt ?? ''}
+        widths={wide ? [720, 1080, 1440] : [240, 400, 640]}
+        sizes={wide ? '(min-width: 48rem) 44rem, 100vw' : '(min-width: 40rem) 12rem, 7rem'}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+        class="cover-img size-full object-cover"
+      />
+    ) : wide ? (
+      <div class="cover-dots flex size-full flex-col justify-between p-3 sm:p-4" aria-hidden="true">
+        <span class="text-[0.6875rem] text-accent">{number} · critical builder</span>
+        <span class="max-w-[18ch] text-xl leading-tight font-bold text-balance text-strong sm:text-3xl">
+          {title}
+        </span>
+        <span class="text-[0.625rem] text-muted">{host}</span>
+      </div>
+    ) : (
+      // Thumbnails are too small for the title (it's right next to them), so just the number.
+      <div class="cover-dots flex size-full items-end p-2 sm:p-3" aria-hidden="true">
+        <span class="text-base font-bold text-accent sm:text-xl">{number}</span>
+      </div>
+    )
+  }
+</div>

@@ -1,0 +1,24 @@
+---
+import { longDate, postNumber, tagUrl, type BlogPost } from '../lib/posts';
+
+interface Props {
+  post: BlogPost;
+  class?: string;
+}
+
+const { post, class: className } = Astro.props;
+const { pubDate, tags } = post.data;
+---
+
+<p class:list={['flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted', className]}>
+  <span class="font-bold text-accent">{postNumber(post)}</span>
+  <time datetime={pubDate.toISOString()}>{longDate(pubDate)}</time>
+  <span>{post.minutes} min read</span>
+  {
+    tags.map((tag) => (
+      <a href={tagUrl(tag)} class="text-link hover:underline">
+        #{tag}
+      </a>
+    ))
+  }
+</p>

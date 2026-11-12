@@ -1,100 +1,59 @@
 ---
 import { NAV_LINKS, SITE_TITLE } from '../consts';
+import { cleanPath } from '../lib/url';
+import Wordmark from './Wordmark.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
-const path = Astro.url.pathname;
-const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+const path = cleanPath(Astro.url.pathname);
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
 ---
 
-<header class="site-header">
-  <div class="wrap bar">
-    <a class="wordmark" href="/" aria-label={`${SITE_TITLE}, home`}>
-      <span class="mark" aria-hidden="true"></span>
-      <span>{SITE_TITLE}</span>
-    </a>
+<header class="flex items-center justify-between gap-3 pt-10 pb-12 sm:gap-4 sm:pt-14 sm:pb-16">
+  <a href="/" class="block shrink-0 text-strong" aria-label={`${SITE_TITLE}, home`}>
+    {/* 2px per pixel on phones, 3px from `sm` up, so the pixels stay crisp. */}
+    <Wordmark class="h-8 w-auto sm:h-12" />
+  </a>
+
+  <div class="flex items-center gap-2 text-strong sm:gap-4">
     <nav aria-label="Main">
-      <ul>
+      <ul class="flex text-[0.8125rem]">
         {
-          NAV_LINKS.map(({ href, label }) => (
-            <li>
-              <a href={href} aria-current={isActive(href) ? 'page' : undefined}>
+          NAV_LINKS.map(({ href, label }, i) => (
+            <li class:list={[i > 0 && 'border-l border-accent pl-2 sm:pl-2.5', 'pr-2 leading-none sm:pr-2.5']}>
+              <a
+                href={href}
+                class="text-accent underline-offset-[3px] hover:underline aria-[current=page]:underline"
+                aria-current={isActive(href) ? 'page' : undefined}
+              >
                 {label}
               </a>
             </li>
           ))
         }
-        <li><a href="/rss.xml">RSS</a></li>
-        <li><ThemeToggle /></li>
       </ul>
     </nav>
+    <div class="flex items-center">
+      <a
+        href="/rss.xml"
+        class="grid size-9 place-items-center hover:text-accent"
+        aria-label="RSS feed"
+        title="RSS feed"
+      >
+        <svg
+          class="size-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"></path>
+          <circle cx="6" cy="18" r="1.2" fill="currentColor" stroke="none"></circle>
+        </svg>
+      </a>
+      <ThemeToggle />
+    </div>
   </div>
 </header>
-
-<style>
-  .site-header {
-    border-bottom: 1px solid var(--rule);
-  }
-  .bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    min-height: 4.5rem;
-  }
-  .wordmark,
-  nav a {
-    font-family: var(--mono);
-    font-size: 0.8125rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    text-decoration: none;
-  }
-  .wordmark {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.7rem;
-    color: var(--ink);
-    font-weight: 500;
-  }
-  .mark {
-    width: 0.7rem;
-    height: 0.7rem;
-    background: var(--accent);
-    transition: transform 400ms cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-  .wordmark:hover .mark {
-    transform: rotate(45deg);
-  }
-  nav ul {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  nav a {
-    color: var(--muted);
-    padding-block: 0.25rem;
-    border-bottom: 1px solid transparent;
-    transition:
-      color 150ms ease,
-      border-color 150ms ease;
-  }
-  nav a:hover,
-  nav a[aria-current='page'] {
-    color: var(--ink);
-  }
-  nav a[aria-current='page'] {
-    border-bottom-color: var(--accent);
-  }
-  @media (max-width: 30rem) {
-    .wordmark span:last-child {
-      max-width: 9ch;
-      line-height: 1.25;
-    }
-    nav ul {
-      gap: 1.1rem;
-    }
-  }
-</style>

@@ -7,15 +7,15 @@ export const SITE_TITLE = 'Critical Builder';
 export const SITE_DESCRIPTION =
   'Notes on building software, and on thinking critically about how it gets built.';
 
+// Big heading at the top of the home page.
+export const HOME_HEADING = 'Hello, World!';
+
 export const AUTHOR = 'Alex Lobera';
 
 export const SITE_LANG = 'en';
 
-// Year shown in the home page margin.
-export const ESTABLISHED = 2026;
-
-// How many posts the home page lists before linking to /blog.
-export const HOME_POST_COUNT = 5;
-
-// Top-level navigation. Add /about, /consulting, etc. here as they're created.
-export const NAV_LINKS: { href: string; label: string }[] = [{ href: '/blog', label: 'Blog' }];
+// Top-level navigation. Add /about, /consulting, /blog, etc. here as they're created.
+export const NAV_LINKS: { href: string; label: string }[] = [
+  { href: '/', label: 'Home' },
+  { href: '/newsletter', label: 'Newsletter' },
+];

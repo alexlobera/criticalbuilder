@@ -84,6 +84,6 @@ export const longDate = (date: Date) =>
     timeZone: 'UTC',
   });
 
-/** No. 007 */
+/** #007 */
 export const postNumber = (post: BlogPost) =>
-  post.number ? `No. ${String(post.number).padStart(3, '0')}` : 'Draft';
+  post.number ? `#${String(post.number).padStart(3, '0')}` : 'Draft';
