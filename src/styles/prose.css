@@ -1,0 +1,231 @@
+/* Long-form article typography. Applied to rendered Markdown/MDX. */
+
+.prose {
+  color: var(--ink);
+  hyphens: auto;
+  hanging-punctuation: first;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose p,
+.prose ul,
+.prose ol,
+.prose blockquote,
+.prose pre,
+.prose table,
+.prose figure {
+  margin: 0 0 1.35em;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  position: relative;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  hyphens: manual;
+  text-wrap: balance;
+}
+
+.prose h2 {
+  font-size: 1.75rem;
+  margin: 2.4em 0 0.7em;
+}
+
+/* Section mark hanging in the margin. */
+.prose h2::before {
+  content: '§';
+  position: absolute;
+  right: calc(100% + 0.6em);
+  top: 0.08em;
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.prose h3 {
+  font-size: 1.35rem;
+  font-style: italic;
+  font-weight: 450;
+  margin: 2em 0 0.6em;
+}
+
+.prose h4 {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 2em 0 0.75em;
+}
+
+.prose a {
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition:
+    text-decoration-thickness 150ms ease,
+    color 150ms ease;
+}
+.prose a:hover {
+  color: var(--accent-text);
+  text-decoration-thickness: 2px;
+}
+
+.prose strong {
+  font-weight: 650;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.3em;
+}
+.prose li {
+  margin-bottom: 0.4em;
+  padding-left: 0.2em;
+}
+.prose li > ul,
+.prose li > ol {
+  margin: 0.4em 0 0;
+}
+.prose ul > li::marker {
+  content: '–  ';
+  color: var(--muted);
+}
+.prose ol > li::marker {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  color: var(--muted);
+}
+
+.prose blockquote {
+  padding: 0.1em 0 0.1em 1.25em;
+  border-left: 2px solid var(--accent);
+  font-style: italic;
+  color: var(--ink-2);
+}
+.prose blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.prose :not(pre) > code {
+  font-family: var(--mono);
+  font-size: 0.82em;
+  padding: 0.12em 0.36em;
+  border-radius: 3px;
+  background: var(--code-bg);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.prose pre {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow-x: auto;
+  tab-size: 2;
+  hyphens: none;
+}
+.prose pre code {
+  font-family: inherit;
+}
+
+.prose hr {
+  border: 0;
+  margin: 3em 0;
+  text-align: center;
+  overflow: visible;
+}
+.prose hr::after {
+  content: '■ ■ ■';
+  font-size: 0.45rem;
+  letter-spacing: 1.6em;
+  color: var(--accent);
+}
+
+.prose img,
+.prose video {
+  display: block;
+  border-radius: 3px;
+}
+
+.prose figure img {
+  margin-bottom: 0.6em;
+}
+.prose figcaption {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.prose table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  hyphens: none;
+}
+.prose th,
+.prose td {
+  padding: 0.55em 1em 0.55em 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.prose th {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom-color: var(--rule-strong);
+}
+
+/* GFM footnotes */
+.prose .footnotes {
+  margin-top: 3.5em;
+  padding-top: 1.25em;
+  border-top: 1px solid var(--rule);
+  font-size: 0.9rem;
+  color: var(--ink-2);
+}
+.prose .footnotes h2 {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 1em;
+}
+.prose .footnotes h2::before {
+  content: none;
+}
+.prose sup a {
+  font-family: var(--mono);
+  font-size: 0.7em;
+  text-decoration: none;
+  color: var(--accent-text);
+}
+
+@media (max-width: 56rem) {
+  .prose h2::before {
+    position: static;
+    margin-right: 0.35em;
+  }
+  .prose pre {
+    margin-inline: calc(-1 * var(--edge));
+    border-inline: 0;
+    border-radius: 0;
+    padding-inline: var(--edge);
+  }
+}

@@ -1,0 +1,99 @@
+---
+import { isoDate, postNumber, postUrl, type BlogPost } from '../lib/posts';
+
+interface Props {
+  posts: BlogPost[];
+  /** Offset for the staggered reveal animation. */
+  delay?: number;
+}
+
+const { posts, delay = 0 } = Astro.props;
+---
+
+<ol class="ledger" role="list">
+  {
+    posts.map((post, i) => (
+      <li class="reveal" style={`--i: ${i + delay}`}>
+        <a href={postUrl(post)}>
+          <span class="meta">
+            <span>{postNumber(post)}</span>
+            <time datetime={post.data.pubDate.toISOString()}>{isoDate(post.data.pubDate)}</time>
+            <span>{post.minutes} min</span>
+          </span>
+          <span class="title">
+            {post.data.title}
+            <span class="arrow" aria-hidden="true">
+              →
+            </span>
+          </span>
+          <span class="desc">{post.data.description}</span>
+        </a>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .ledger {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li + li {
+    border-top: 1px solid var(--rule);
+  }
+  a {
+    display: grid;
+    gap: 0.45rem;
+    padding-block: 1.6rem;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  li:first-child a {
+    padding-top: 0;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .meta span:first-child {
+    color: var(--accent-text);
+  }
+  .title {
+    font-size: 1.65rem;
+    font-weight: 450;
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+    transition: color 150ms ease;
+  }
+  .arrow {
+    display: inline-block;
+    margin-left: 0.15em;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-0.4em);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+  a:hover .title {
+    color: var(--accent-text);
+  }
+  a:hover .arrow,
+  a:focus-visible .arrow {
+    opacity: 1;
+    transform: none;
+  }
+  .desc {
+    color: var(--ink-2);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+</style>

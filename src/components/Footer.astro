@@ -1,0 +1,56 @@
+---
+import { AUTHOR, NAV_LINKS } from '../consts';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap row">
+    <p class="margin label">© {year}</p>
+    <div class="main inner">
+      <p class="label">{AUTHOR}</p>
+      <ul class="label">
+        {
+          NAV_LINKS.map(({ href, label }) => (
+            <li>
+              <a href={href}>{label}</a>
+            </li>
+          ))
+        }
+        <li><a href="/rss.xml">RSS</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 4rem;
+    padding-block: 2rem 2.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+  }
+  ul {
+    display: flex;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  a {
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--ink);
+  }
+  @media (max-width: 56rem) {
+    .margin {
+      display: none;
+    }
+  }
+</style>

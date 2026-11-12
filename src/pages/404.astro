@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Not found" description="This page doesn't exist." noindex>
+  <section class="wrap row lost">
+    <p class="margin label reveal">Error 404</p>
+    <div class="main">
+      <h1 class="reveal" style="--i: 1">Nothing was built here<span>.</span></h1>
+      <p class="reveal" style="--i: 2">
+        The page you're looking for doesn't exist, or it moved.
+      </p>
+      <p class="reveal" style="--i: 3">
+        <a class="arrow-link" href="/">Go home <span aria-hidden="true">→</span></a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lost {
+    padding-block: clamp(4rem, 12vw, 8rem);
+  }
+  .lost .margin {
+    padding-top: 0.9rem;
+  }
+  h1 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(2.75rem, 7vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  h1 span {
+    color: var(--accent);
+  }
+  p:not(.label) {
+    margin: 0 0 2rem;
+    color: var(--ink-2);
+  }
+  @media (max-width: 56rem) {
+    .lost .margin {
+      padding-top: 0;
+      margin-bottom: 1rem;
+    }
+  }
+</style>

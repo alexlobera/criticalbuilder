@@ -1,0 +1,247 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  getPosts,
+  longDate,
+  ogImageUrl,
+  postNumber,
+  postUrl,
+  tagUrl,
+  type BlogPost,
+} from '../../lib/posts';
+import '../../styles/prose.css';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
+  }));
+}
+
+interface Props {
+  post: BlogPost;
+  newer?: BlogPost;
+  older?: BlogPost;
+}
+
+const { post, newer, older } = Astro.props;
+const { title, description, pubDate, updatedDate, tags } = post.data;
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={ogImageUrl(post)}
+  article={{ publishedTime: pubDate, modifiedTime: updatedDate, tags }}
+>
+  <article>
+    <header class="post-head wrap row">
+      <dl class="margin meta reveal">
+        <div>
+          <dt class="visually-hidden">Number</dt>
+          <dd class="number">{postNumber(post)}</dd>
+        </div>
+        <div>
+          <dt class="visually-hidden">Published</dt>
+          <dd><time datetime={pubDate.toISOString()}>{longDate(pubDate)}</time></dd>
+        </div>
+        {
+          updatedDate && (
+            <div>
+              <dt>Updated</dt>
+              <dd>
+                <time datetime={updatedDate.toISOString()}>{longDate(updatedDate)}</time>
+              </dd>
+            </div>
+          )
+        }
+        <div>
+          <dt class="visually-hidden">Reading time</dt>
+          <dd>{post.minutes} min read</dd>
+        </div>
+      </dl>
+      <div class="main">
+        <h1 class="reveal" style="--i: 1">{title}</h1>
+        <p class="dek reveal" style="--i: 2">{description}</p>
+      </div>
+    </header>
+
+    <div class="post-body wrap row">
+      {
+        tags.length > 0 && (
+          <aside class="margin" aria-label="Tags">
+            <ul class="tag-list">
+              {tags.map((tag) => (
+                <li>
+                  <a class="tag" href={tagUrl(tag)}>
+                    {tag}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )
+      }
+      <div class="main prose reveal" style="--i: 3">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  <nav class="post-nav wrap row" aria-label="More posts">
+    <p class="margin">
+      <a class="arrow-link back" href="/blog"><span aria-hidden="true">←</span> All posts</a>
+    </p>
+    <div class="main pager">
+      {
+        older && (
+          <a class="pager-link" href={postUrl(older)} rel="prev">
+            <span class="label">Older</span>
+            <span class="pager-title">{older.data.title}</span>
+          </a>
+        )
+      }
+      {
+        newer && (
+          <a class="pager-link newer" href={postUrl(newer)} rel="next">
+            <span class="label">Newer</span>
+            <span class="pager-title">{newer.data.title}</span>
+          </a>
+        )
+      }
+    </div>
+  </nav>
+</BaseLayout>
+
+<style>
+  .post-head {
+    padding-block: clamp(3rem, 8vw, 5.5rem) clamp(2.25rem, 5vw, 3.25rem);
+  }
+  .meta {
+    margin: 0;
+    padding-top: 0.8rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .meta div + div {
+    margin-top: 0.4rem;
+  }
+  .meta dt:not(.visually-hidden) {
+    color: var(--muted);
+    opacity: 0.75;
+  }
+  .meta dd {
+    margin: 0;
+  }
+  .meta .number {
+    color: var(--accent-text);
+  }
+  h1 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(2.5rem, 6.5vw, 4rem);
+    font-weight: 420;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .dek {
+    margin: 0;
+    font-size: clamp(1.2rem, 2.2vw, 1.4rem);
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .post-body {
+    padding-top: clamp(2rem, 5vw, 3rem);
+    border-top: 1px solid var(--rule);
+  }
+  .post-body aside .tag-list {
+    position: sticky;
+    top: 2rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .post-nav {
+    margin-top: 4.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+    row-gap: 2rem;
+  }
+  .post-nav .margin {
+    margin: 0;
+    padding-top: 0.2rem;
+  }
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .pager-link {
+    display: grid;
+    gap: 0.35rem;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .pager-link.newer {
+    grid-column: 2;
+    text-align: right;
+  }
+  .pager-title {
+    font-size: 1.2rem;
+    line-height: 1.3;
+    text-wrap: balance;
+    transition: color 150ms ease;
+  }
+  .pager-link:hover .pager-title {
+    color: var(--accent-text);
+  }
+
+  @media (max-width: 56rem) {
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 1.25rem;
+      padding-top: 0;
+      margin-bottom: 1.25rem;
+    }
+    .meta div + div {
+      margin-top: 0;
+    }
+    .meta dt:not(.visually-hidden) {
+      display: inline;
+      margin-right: 0.4em;
+    }
+    .meta dd {
+      display: inline;
+    }
+    .post-body aside {
+      order: 2;
+      margin-top: 2.5rem;
+    }
+    .post-body aside .tag-list {
+      position: static;
+      flex-direction: row;
+    }
+    .post-nav .margin {
+      order: 2;
+    }
+  }
+  @media (max-width: 34rem) {
+    .pager {
+      grid-template-columns: 1fr;
+    }
+    .pager-link.newer {
+      grid-column: 1;
+      grid-row: 1;
+      text-align: left;
+    }
+  }
+</style>
